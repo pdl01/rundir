@@ -1,0 +1,124 @@
+#!/bin/bash
+
+FILE=./.rundir_rc     
+commandNo=1
+
+Help()
+{
+   # Display Help
+   echo "Add description of the script functions here."
+   echo
+   echo "Syntax: rundir -[aidelh] [<number] [-c <command> "
+   echo "options:"
+   echo "-a -c <command>           - add a command to the end of the file."
+   echo "-i <number> -c <command>  - insert the command at line number."
+   echo "-d <number>               - delete the command at line number." 
+   echo "-l                        -list the commands."
+   echo "-e <number>               -execute the command at sequence <number>."
+   echo "-h                        - Print this Help."
+   echo
+}
+
+
+createRCFileIfNotExists() {
+#check for ./runrc   
+  if [ -f $FILE ]; then
+    echo "File $FILE exists."
+  else
+     echo "File $FILE does not exist."
+     touch $FILE 
+  fi
+
+}
+ListContents() 
+{
+  createRCFileIfNotExists
+
+  while read -r line
+  do
+    echo "$line"
+  done < $FILE
+}
+
+AddCommand() 
+{
+  createRCFileIfNotExists
+
+#check for ./runrc   
+if [ -f $FILE ]; then
+   echo "File $FILE exists."
+else
+   echo "File $FILE does not exist."
+   touch $FILE 
+   exit	
+fi
+
+}
+
+InsertCommand() 
+{
+  createRCFileIfNotExists
+  if [ ! -f $FILE ]; then
+     echo "File $FILE does not exist."
+     exit	
+  fi
+
+}
+
+
+DeleteCommand() 
+{
+  createRCFileIfNotExists
+  if [ ! -f $FILE ]; then
+     echo "File $FILE does not exist."
+     exit	
+  fi
+
+}
+
+
+ExecuteCommandAtLineNumber() 
+{
+  createRCFileIfNotExists
+  echo $1
+  if [ ! -f $FILE ]; then
+     echo "File $FILE does not exist."
+     exit	
+  fi
+  echo $1
+
+}
+
+
+while getopts ":ha:i:d:ln:e:" option; do
+   case $option in
+      h) # display Help
+         Help
+         exit;;
+      a) #add
+         commandNo=$OPTARG
+         echo ${commandNo}
+         exit;;
+      i) #insert
+         commandNo=$OPTARG
+         echo $commandNo
+         exit;;
+      d) #delete
+         commandNo=$OPTARG
+         echo $commandNo
+         exit;;
+      l) #list
+	 ListContents
+         exit;;
+      e) #execute
+         commandNo=$OPTARG
+         ExecuteCommandAtLineNumber $commandNo 
+         exit;;
+      n) # Enter a name
+         Name=$OPTARG
+         exit;;
+     \?) # Invalid option
+         echo "Error: Invalid option"
+         exit;;
+   esac
+done
