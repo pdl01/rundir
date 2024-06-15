@@ -1,7 +1,10 @@
 #!/bin/bash
 
 FILE=./.rundir_rc     
-commandNo=1
+COMMAND_NUM=1
+MODE="LIST";
+COMMAND_TEXT="";
+
 
 Help()
 {
@@ -43,19 +46,10 @@ ListContents()
 AddCommand() 
 {
   createRCFileIfNotExists
-
-#check for ./runrc   
-if [ -f $FILE ]; then
-   echo "File $FILE exists."
-else
-   echo "File $FILE does not exist."
-   touch $FILE 
-   exit	
-fi
-
+  echo $1 >> $FILE
 }
 
-InsertCommand() 
+InsertCommandAtLineNumber() 
 {
   createRCFileIfNotExists
   if [ ! -f $FILE ]; then
@@ -66,7 +60,7 @@ InsertCommand()
 }
 
 
-DeleteCommand() 
+DeleteCommandAtLineNumber() 
 {
   createRCFileIfNotExists
   if [ ! -f $FILE ]; then
@@ -90,35 +84,57 @@ ExecuteCommandAtLineNumber()
 }
 
 
-while getopts ":ha:i:d:ln:e:" option; do
+while getopts ":hai:d:le:c:" option; do
    case $option in
       h) # display Help
          Help
          exit;;
       a) #add
-         commandNo=$OPTARG
-         echo ${commandNo}
-         exit;;
+	 MODE="ADD"
+	 ;;
       i) #insert
-         commandNo=$OPTARG
-         echo $commandNo
-         exit;;
+	 MODE="INSERT"
+	 ;;
       d) #delete
-         commandNo=$OPTARG
-         echo $commandNo
-         exit;;
+	 MODE="DELETE"
+	 ;;
       l) #list
-	 ListContents
-         exit;;
+	 MODE="LIST"
+	 ;;
       e) #execute
-         commandNo=$OPTARG
-         ExecuteCommandAtLineNumber $commandNo 
-         exit;;
-      n) # Enter a name
-         Name=$OPTARG
-         exit;;
+         COMMAND_NUM=$OPTARG
+	 MODE="EXECUTE"
+	 ;;
+      c) # enter a command
+         COMMAND_TEXT=$OPTARG	
+	 ;;
      \?) # Invalid option
          echo "Error: Invalid option"
          exit;;
    esac
 done
+
+echo $MODE;
+echo $COMMAND_TEXT
+echo $COMMAND_NUM
+
+case $MODE in
+	"LIST") 
+		ListContents
+		;;
+	"EXECUTE") 
+		ExecuteCommandAtLineNumber $COMMAND_NUM
+		;;
+	"INSERT") 
+		InsertCommandAtLineNumber $COMMAND_NUM $COMMAND_TEXT
+		;;
+	"ADD") 
+		AddCommand $COMMAND_TEXT
+		;;
+	"DELETE") 
+		DeleteCommandAtLineNumber $COMMAND_NUM 
+		;;
+esac
+
+
+
