@@ -2,33 +2,37 @@
 
 FILE=./.rundir_rc     
 COMMAND_NUM=1
-MODE="LIST";
+#MODE="LIST";
 COMMAND_TEXT="";
 
 
 Help()
 {
    # Display Help
-   echo "Add description of the script functions here."
-   echo
-   echo "Syntax: rundir -[aidelh] [<number] [-c <command> "
-   echo "options:"
-   echo "-a -c <command>           - add a command to the end of the file."
-   echo "-i <number> -c <command>  - insert the command at line number."
-   echo "-d <number>               - delete the command at line number." 
-   echo "-l                        -list the commands."
-   echo "-e <number>               -execute the command at sequence <number>."
-   echo "-h                        - Print this Help."
-   echo
+   printf "Add description of the script functions here.\n";
+   printf "\n" ;
+   printf "Syntax: rundir -[aidelh] [<number] [-c <command>\n";
+   printf "options:\n";
+   printf " -a -c <command>           - add a command to the end of the file.\n"
+   printf " -i <number> -c <command>  - insert the command at line number.\n"
+   printf " -d <number>               - delete the command at line number.\n" 
+   printf " -l                        -list the commands.\n"
+   printf " -e <number>               -execute the command at sequence <number>.\n"
+   printf " -h                        - Print this Help.\n"
+   printf ""
 }
 
+NotImplemented()
+{
+   printf "Operation Not implemented.\n";
+}
 
 createRCFileIfNotExists() {
 #check for ./runrc   
   if [ -f $FILE ]; then
-    echo "File $FILE exists."
+     printf "File %s exists.\n" "$FILE"
   else
-     echo "File $FILE does not exist."
+     printf "File %s does not exist.\n" "$FILE"
      touch $FILE 
   fi
 
@@ -51,9 +55,11 @@ AddCommand()
 
 InsertCommandAtLineNumber() 
 {
+	NotImplemented
+	exit
   createRCFileIfNotExists
   if [ ! -f $FILE ]; then
-     echo "File $FILE does not exist."
+     printf "File %s does not exist.\n" "$FILE"
      exit	
   fi
 
@@ -62,9 +68,11 @@ InsertCommandAtLineNumber()
 
 DeleteCommandAtLineNumber() 
 {
+	NotImplemented
+	exit
   createRCFileIfNotExists
   if [ ! -f $FILE ]; then
-     echo "File $FILE does not exist."
+     printf "File %s does not exist.\n" "$FILE"
      exit	
   fi
 
@@ -76,11 +84,22 @@ ExecuteCommandAtLineNumber()
   createRCFileIfNotExists
   echo $1
   if [ ! -f $FILE ]; then
-     echo "File $FILE does not exist."
+     printf "File %s does not exist.\n" "$FILE"
      exit	
   fi
   echo $1
-
+  #get the command from the given line 
+  i=1
+  while read -r line
+  do
+    if [ $i -eq $1 ]; then
+       command=$line
+    fi
+    ((i++))
+     printf "Counter %d\n" "$i"
+  done < $FILE
+  printf "executing command: %s\n" "$command"
+  $command
 }
 
 
@@ -109,14 +128,14 @@ while getopts ":hai:d:le:c:" option; do
          COMMAND_TEXT=$OPTARG	
 	 ;;
      \?) # Invalid option
-         echo "Error: Invalid option"
+         printf "Error: Invalid option"
          exit;;
    esac
 done
 
-echo $MODE;
-echo $COMMAND_TEXT
-echo $COMMAND_NUM
+printf "MODE = %s\n" "$MODE"
+printf "COMMAND_TEXT = %s\n" "${COMMAND_TEXT}"
+printf "COMMAND_NUM = %s\n" "${COMMAND_NUM}"
 
 case $MODE in
 	"LIST") 
