@@ -82,12 +82,10 @@ DeleteCommandAtLineNumber()
 ExecuteCommandAtLineNumber() 
 {
   createRCFileIfNotExists
-  echo $1
   if [ ! -f $FILE ]; then
      printf "File %s does not exist.\n" "$FILE"
      exit	
   fi
-  echo $1
   #get the command from the given line 
   i=1
   while read -r line
@@ -96,7 +94,7 @@ ExecuteCommandAtLineNumber()
        command=$line
     fi
     ((i++))
-     printf "Counter %d\n" "$i"
+     #printf "Counter %d\n" "$i"
   done < $FILE
   printf "executing command: %s\n" "$command"
   $command
@@ -133,9 +131,9 @@ while getopts ":hai:d:le:c:" option; do
    esac
 done
 
-printf "MODE = %s\n" "$MODE"
-printf "COMMAND_TEXT = %s\n" "${COMMAND_TEXT}"
-printf "COMMAND_NUM = %s\n" "${COMMAND_NUM}"
+#printf "MODE = %s\n" "$MODE"
+#printf "COMMAND_TEXT = %s\n" "${COMMAND_TEXT}"
+#printf "COMMAND_NUM = %s\n" "${COMMAND_NUM}"
 
 case $MODE in
 	"LIST") 
